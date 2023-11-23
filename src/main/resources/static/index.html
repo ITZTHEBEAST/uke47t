@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Kunde</h1>
+srkiv inn navnet :<input type="text" id="navn"><br>
+skriv inn adressen : <input type="text" id="adresse"/><br>
+<button onclick="hentData()">Registrer</button>
+<br>
+Alle Kundene : <div id="utKunder"></div> <br>
+
+<script type="application/javascript">
+    function hentData(){
+        const kunde = {
+            navn : $("#navn").val(),
+            adresse : $("#adresse").val()
+        }
+            $.post("/lagre", kunde, function (){
+                hentAlle();
+            });
+
+        $("#navn").val("");
+        $("#adresse").val("");
+    }
+    function hentAlle() {
+        $.get("/hentAlle", function (data) {
+            formaterData(data);
+        })
+    }
+    function formaterData(kunder){
+        let ut = "<table> <tr> <th>Navn</th> <th>Adresse</th></tr>";
+
+        for (const kunde of kunder) {
+            ut += `<tr> <td>${kunde.navn}</td> <td>${kunde.adresse}</td> </tr>`
+        }
+
+        ut += "</table>";
+        $("#utKunder").html(ut);
+    }
+</script>
+
+</body>
+</html>
