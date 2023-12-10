@@ -27,5 +27,9 @@ public class KundeKontroller{
     public List<Kunde> hentAlle(){
         return alleKunder;
     }
+    @GetMapping("/slettAlle")
+    public void slettAlle(){
+        alleKunder.clear();
+    }
 }
 

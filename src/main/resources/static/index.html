@@ -6,41 +6,60 @@
     <title>Title</title>
 </head>
 <body>
-<h1>Kunde</h1>
-srkiv inn navnet :<input type="text" id="navn"><br>
-skriv inn adressen : <input type="text" id="adresse"/><br>
-<button onclick="hentData()">Registrer</button>
+
+<h1>Produkter</h1>
+
+<!-- Skjema for å legge til ny kunde -->
+Skriv inn navnet :<input type="text" id="navn"><br>
+Skriv inn pris :<input type="number" id="adresse"/><br>
+<button onclick="hentData()">Legg til produkt</button>
 <br>
-Alle Kundene : <div id="utKunder"></div> <br>
+<div id="kundene"></div>
+
+<button onclick="slettKundene()">Slett alle prodkter</button>
+
+<!-- Vis alle produkter -->
+alle produkter: <div id="utKunder"></div> <br>
 
 <script type="application/javascript">
-    function hentData(){
+    // Funksjon for å registrere en ny kunde
+    function hentData() {
         const kunde = {
             navn : $("#navn").val(),
             adresse : $("#adresse").val()
         }
-            $.post("/lagre", kunde, function (){
-                hentAlle();
-            });
+        // Opprett et kundeobjekt med navn og adresse fra input-feltene
+        // Send kundeobjektet til serveren for lagring
+        $.post("/lagre", kunde, function () {
+            hentAlle(); // Oppdater visningen med alle kundene etter at registreringen er fullført
+        });
 
-        $("#navn").val("");
-        $("#adresse").val("");
+        $("#navn").val(""); // Tøm input-feltet for navn etter registrering
+        $("#adresse").val(""); // Tøm input-feltet for adresse etter registrering
     }
+
+    // Funksjon for å hente alle kundene fra serveren
     function hentAlle() {
         $.get("/hentAlle", function (data) {
-            formaterData(data);
+            formaterData(data); // Utfør en HTTP GET-request for å hente alle kundene og formater kundedataene
         })
     }
+
+    // Funksjon for å formatere og vise kundedataene
     function formaterData(kunder){
-        let ut = "<table> <tr> <th>Navn</th> <th>Adresse</th></tr>";
-
-        for (const kunde of kunder) {
-            ut += `<tr> <td>${kunde.navn}</td> <td>${kunde.adresse}</td> </tr>`
+        let ut = "<table><tr><th>Produkt</th><th>Pris</th></tr>";
+        for (const kunde of kunder){
+            ut+="<tr><td>"+kunde.navn+"</td><td>"+kunde.adresse+"</td></tr>";
         }
-
-        ut += "</table>";
-        $("#utKunder").html(ut);
+        ut+="</table>";
+        $("#kundene").html(ut);
     }
+
+        function slettKundene(){
+            $.get("/slettAlle", function(){
+                hentAlle();
+            });
+        }
 </script>
 
 </body>
